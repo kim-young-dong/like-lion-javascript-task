@@ -19,39 +19,33 @@ const resultNode = document.querySelector("#result");
 function renderResult() {
   if (selectedProducts.length === 0) {
     resultNode.classList.add("hidden");
-    return;
+  } else {
+    // result list
+    listNode.innerHTML = "";
+    const listNode = resultNode.querySelector("#selected-list");
+
+    selectedProducts.forEach((product) => {
+      const liNode = document.createElement("li");
+      liNode.textContent = `${product.name} - ${product.price}원`;
+      listNode.appendChild(liNode);
+    });
+
+    // result total
+    const totalNode = resultNode.querySelector("#total-price");
+    totalPrice = selectedProducts.reduce((acc, product) => {
+      return acc + product.price;
+    }, 0);
+    totalNode.textContent = totalPrice;
+
+    resultNode.classList.remove("hidden");
   }
-
-  // result list
-  resultNode.classList.remove("hidden");
-
-  const listNode = resultNode.querySelector("#selected-list");
-  listNode.innerHTML = "";
-
-  selectedProducts.forEach((product) => {
-    const liNode = document.createElement("li");
-    liNode.textContent = `${product.name} - ${product.price}원`;
-    listNode.appendChild(liNode);
-  });
-
-  // result total
-  const totalNode = resultNode.querySelector("#total-price");
-  totalPrice = selectedProducts.reduce((acc, product) => {
-    return acc + product.price;
-  }, 0);
-  totalNode.textContent = totalPrice;
 }
 
-function selectProduct() {
-  const selectedValues = [];
-  for (var i = 0; i < selectNode.options.length; i++) {
-    if (selectNode.options[i].selected) {
-      selectedValues.push(selectNode.options[i].value);
-    }
-  }
+function selectProduct(e) {
+  const selectedValues = e.target.selectedOptions;
 
   selectedProducts = products.filter((product) => {
-    return selectedValues.includes(product.name);
+    return [...selectedValues].find((option) => option.value === product.name);
   });
   renderResult();
 }
